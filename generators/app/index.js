@@ -2,7 +2,7 @@ const Generator = require('yeoman-generator');
 const chalk = require('chalk');
 const yosay = require('yosay');
 const fs = require('fs');
-const gherkin = require('gherkin');
+const gherkin = require('@devniel/gherkin');
 const directory = require('./gherkin-languages');
 
 async function streamToArray(readableStream) {
@@ -19,7 +19,7 @@ async function streamToArray(readableStream) {
 module.exports = class extends Generator {
   prompting() {
     this.log(yosay(
-      'Welcome to the doozie ' + chalk.red('generator-cucumber-steps') + ' generator!'
+      'Welcome to the doozie ' + chalk.red('generator-testcafe-cucumber-steps') + ' generator!'
     ));
 
     const prompts = [
@@ -56,6 +56,8 @@ module.exports = class extends Generator {
       'utf-8'
     );
 
+    console.log('feature file:', featureFile);
+
     const featureFilePath = /\.feature$/.test(featurePath) ? featurePath : `${featurePath}.feature`;
 
     const parsedFeature = await this.parseFeature(featureFilePath);
@@ -65,8 +67,6 @@ module.exports = class extends Generator {
     featureName = featureName.slice(0, featureName.indexOf('.'));
 
     const destinationPath = `${stepsPath}/${featureName}.steps.js`;
-
-    console.log('destinationPath:', destinationPath);
 
     this.fs.copyTpl(
       this.templatePath('bootstrap.ejs'),
@@ -80,9 +80,6 @@ module.exports = class extends Generator {
   async parseFeature(featureFile) {
     if (featureFile) {
       let parsedFeature = [];
-
-      console.log('featureFile:', featureFile);
-
       const options = {
         includeSource: true,
         includeGherkinDocument: true,
@@ -90,7 +87,6 @@ module.exports = class extends Generator {
       };
 
       const parsed = await streamToArray(gherkin.fromPaths([featureFile], options));
-
       const feature = parsed[1].gherkinDocument.feature;
       const {
         language,
@@ -151,7 +147,7 @@ module.exports = class extends Generator {
       };
 
       if (paramRegexp.test(stepString)) {
-        const stepRegexp = stepString.replace(paramRegexp, '"(.*)"');
+        const stepRegexp = stepString.replace(paramRegexp, '{string}');
         let i = 1;
         stepData = Object.assign(stepData, {
           regexp: stepRegexp

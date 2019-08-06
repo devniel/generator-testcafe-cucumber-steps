@@ -147,6 +147,14 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
+"@devniel/gherkin@^6.0.17-2":
+  version "6.0.17-2"
+  resolved "https://registry.yarnpkg.com/@devniel/gherkin/-/gherkin-6.0.17-2.tgz#99cd955a787b01727a754d388d50024cff3f5ddf"
+  integrity sha512-emDGgumzFhddqTeNQ95xE4pxi4xSTwY2kDRCSBWg8ci3EapXTgik8PPyLrygO7Gy1YH+oLV9EWdYXFjz7zX0yA==
+  dependencies:
+    c21e "^1.1.9"
+    cucumber-messages "^2.1.2"
+
 "@jest/console@^24.7.1":
   version "24.7.1"
   resolved "https://registry.yarnpkg.com/@jest/console/-/console-24.7.1.tgz#32a9e42535a97aedfe037e725bd67e954b459545"
@@ -898,7 +906,8 @@ buffer-from@^1.0.0:
 
 c21e@^1.1.9:
   version "1.2.1"
-  resolved "https://codeload.github.com/joscha/c21e-javascript/tar.gz/b8d651fb2abd51f11451cd8cd9dc2fe234b31b98"
+  resolved "https://registry.yarnpkg.com/c21e/-/c21e-1.2.1.tgz#90ac456a8024542be6550b0f75dcb78fd4109698"
+  integrity sha512-J6SsagIm92aO7PQ5Exzoqu5gdztpcTIUn46KJ0oi4f26D+DrPMaDHH+6WI/T2T3KmRtRJlee8/tkwB7CUI5F9A==
 
 cache-base@^1.0.1:
   version "1.0.1"
@@ -2086,14 +2095,6 @@ gherkin@^5.0.0:
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/gherkin/-/gherkin-5.1.0.tgz#684bbb03add24eaf7bdf544f58033eb28fb3c6d5"
   integrity sha1-aEu7A63STq9731RPWAM+so+zxtU=
-
-gherkin@^6.0.17:
-  version "6.0.17"
-  resolved "https://registry.yarnpkg.com/gherkin/-/gherkin-6.0.17.tgz#d1218a221f288c100fcbc5a47697f6bedc7242c9"
-  integrity sha512-mr5MWtfsbpPuIRt86vEDV8d60L5Eoeh8W8RuGXqFzb+DLgWcuKwfo+k9zprMJXez/MLAF5yF1q7hX5bcwuLZHA==
-  dependencies:
-    c21e "^1.1.9"
-    cucumber-messages "^2.1.2"
 
 github-username@^3.0.0:
   version "3.0.0"
@@ -5322,9 +5323,9 @@ type-fest@^0.6.0:
   integrity sha512-q+MB8nYR1KDLrgr4G5yemftpMC7/QLqVndBmEEdqzmNj5dcFOO4Oo8qlwZE3ULT3+Zim1F8Kq4cBnikNhlCMlg==
 
 type@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/type/-/type-1.0.1.tgz#084c9a17fcc9151a2cdb1459905c2e45e4bb7d61"
-  integrity sha512-MAM5dBMJCJNKs9E7JXo4CXRAansRfG0nlJxW7Wf6GZzSOvH31zClSaHdIMWLehe/EGMBkqeC55rrkaOr5Oo7Nw==
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/type/-/type-1.0.3.tgz#16f5d39f27a2d28d86e48f8981859e9d3296c179"
+  integrity sha512-51IMtNfVcee8+9GJvj0spSuFcZHe9vSib6Xtgsny1Km9ugyz2mbS08I3rsUIRYgJohFRFU1160sgRodYz378Hg==
 
 uglify-js@^3.1.4:
   version "3.6.0"

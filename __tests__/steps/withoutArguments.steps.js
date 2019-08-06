@@ -1,16 +1,18 @@
-const {defineSupportCode} = require('cucumber');
+const {Given, When, Then} = require('cucumber');
 
-defineSupportCode(function ({Given, When, Then}) {
-  Given(/^precondition$/, function () {
-    return true;
-  });
-  When(/^action$/, function () {
-    return true;
-  });
-  When(/^addition$/, function () {
-    return true;
-  });
-  Then(/^testable outcome$/, function () {
-    return true;
-  });
+Given(/^precondition$/, function() {
+  return 'pending';
 });
+
+When(/^action$/, function() {
+  return 'pending';
+});
+
+When(/^addition$/, function() {
+  return 'pending';
+});
+
+Then(/^testable outcome$/, function() {
+  return 'pending';
+});
+
