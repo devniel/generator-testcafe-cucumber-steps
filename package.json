@@ -11,6 +11,10 @@
   "keywords": [
     "yeoman-generator"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/devniel/generator-testcafe-cucumber-steps.git"
+  },
   "dependencies": {
     "@devniel/gherkin": "^6.0.17-2",
     "chalk": "^2.4.2",
