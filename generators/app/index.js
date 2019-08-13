@@ -35,6 +35,12 @@ module.exports = class extends Generator {
         name: 'stepsPath',
         message: 'Specify the path to the directory where the steps file will be created:',
         default: '.'
+      },
+      {
+        type: 'input',
+        name: 'templatePath',
+        message: 'Specify the path to the template that will be used to generate the files:',
+        default: null
       }
     ];
 
@@ -45,7 +51,7 @@ module.exports = class extends Generator {
   }
 
   async writing() {
-    const {featurePath, stepsPath} = this.props;
+    const {featurePath, stepsPath, templatePath} = this.props;
 
     if (!featurePath) {
       throw new Error('Features path must not be empty!');
@@ -69,7 +75,7 @@ module.exports = class extends Generator {
     const destinationPath = `${stepsPath}/${featureName}.steps.js`;
 
     this.fs.copyTpl(
-      this.templatePath('bootstrap.ejs'),
+      templatePath || this.templatePath('bootstrap.ejs'),
       this.destinationPath(destinationPath),
       {
         steps: parsedFeature
