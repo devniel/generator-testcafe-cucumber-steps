@@ -8,7 +8,7 @@ describe('Creates step file without paramaters', () => {
     return helpers.run(path.join(__dirname, '../generators/app'))
       .withPrompts({
         featurePath: path.resolve(__dirname, 'features/withoutArguments.feature'),
-        stepsPath: path.resolve(__dirname, 'steps')
+        stepsPath: path.resolve(__dirname, 'steps/generated')
       })
       .catch(reason => {
         throw reason;
@@ -17,7 +17,7 @@ describe('Creates step file without paramaters', () => {
 
   it('creates step file', () => {
     assert.file([
-      path.resolve(__dirname, 'steps', 'withoutArguments.steps.js')
+      path.resolve(__dirname, 'steps/generated', 'withoutArguments.steps.js')
     ]);
   });
 
@@ -35,7 +35,7 @@ describe('Creates step file with paramaters', () => {
     return helpers.run(path.join(__dirname, '../generators/app'))
       .withPrompts({
         featurePath: path.resolve(__dirname, 'features/withArguments.feature'),
-        stepsPath: path.resolve(__dirname, 'steps')
+        stepsPath: path.resolve(__dirname, 'steps/generated')
       })
       .catch(reason => {
         throw reason;
@@ -44,7 +44,7 @@ describe('Creates step file with paramaters', () => {
 
   it('creates step file', () => {
     assert.file([
-      path.resolve(__dirname, 'steps', 'withArguments.steps.js')
+      path.resolve(__dirname, 'steps/generated', 'withArguments.steps.js')
     ]);
   });
 
@@ -55,4 +55,37 @@ describe('Creates step file with paramaters', () => {
   //   );
   //   assert.fileContent('withArguments.steps.js', withArgumentsSteps);
   // });
+});
+
+describe('Create step file with repetitions', () => {
+  beforeAll(() => {
+    return helpers.run(path.join(__dirname, '../generators/app'))
+      .withPrompts({
+        featurePath: path.resolve(__dirname, 'features/withRepetitions.feature'),
+        stepsPath: path.resolve(__dirname, 'steps/generated')
+      })
+      .catch(reason => {
+        throw reason;
+      });
+  });
+
+  it('creates step file', () => {
+    assert.file([
+      path.resolve(__dirname, 'steps/generated', 'withRepetitions.steps.js')
+    ]);
+  });
+
+  it('creates step file equals to expected file', () => {
+    const withRepetitionsSteps = fs.readFileSync(
+      path.resolve(__dirname, 'steps/generated/withRepetitions.steps.js'),
+      'utf-8'
+    );
+
+    const expectedWithRepetitionsSteps = fs.readFileSync(
+      path.resolve(__dirname, 'steps/expected/withRepetitions.steps.js'),
+      'utf-8'
+    );
+
+    expect(expectedWithRepetitionsSteps).toMatch(withRepetitionsSteps);
+  });
 });

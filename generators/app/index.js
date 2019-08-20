@@ -57,13 +57,6 @@ module.exports = class extends Generator {
       throw new Error('Features path must not be empty!');
     }
 
-    const featureFile = fs.readFileSync(
-      /\.feature$/.test(featurePath) ? featurePath : `${featurePath}.feature`,
-      'utf-8'
-    );
-
-    console.log('feature file:', featureFile);
-
     const featureFilePath = /\.feature$/.test(featurePath) ? featurePath : `${featurePath}.feature`;
 
     const parsedFeature = await this.parseFeature(featureFilePath);
@@ -114,6 +107,7 @@ module.exports = class extends Generator {
   parseSteps(steps, language) {
     if (steps) {
       let parsedSteps = [];
+      let parsedStepsDict = {};
       const currentDictionary = directory[language];
 
       steps.map(step => {
@@ -138,7 +132,12 @@ module.exports = class extends Generator {
             }
           }
         });
-        parsedSteps = parsedSteps.concat(options);
+
+        // To avoid repetitions, same steps should be reusable.
+        if (!parsedStepsDict[options.regexp]) {
+          parsedSteps = parsedSteps.concat(options);
+          parsedStepsDict[options.regexp] = true;
+        }
       });
 
       return parsedSteps;
