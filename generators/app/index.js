@@ -79,6 +79,7 @@ module.exports = class extends Generator {
   async parseFeature(featureFile) {
     if (featureFile) {
       let parsedFeature = [];
+      let parsedStepsDict = {};
       const options = {
         includeSource: true,
         includeGherkinDocument: true,
@@ -95,7 +96,7 @@ module.exports = class extends Generator {
       children.map(child => {
         if (child.scenario) {
           parsedFeature = parsedFeature.concat(
-            this.parseSteps(child.scenario.steps, language)
+            this.parseSteps(child.scenario.steps, language, parsedStepsDict)
           );
         }
       });
@@ -104,10 +105,9 @@ module.exports = class extends Generator {
     }
   }
 
-  parseSteps(steps, language) {
+  parseSteps(steps, language, parsedStepsDict) {
     if (steps) {
       let parsedSteps = [];
-      let parsedStepsDict = {};
       const currentDictionary = directory[language];
 
       steps.map(step => {
