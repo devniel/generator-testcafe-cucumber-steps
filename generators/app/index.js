@@ -114,7 +114,7 @@ module.exports = class extends Generator {
         const {keyword, text} = step;
         let options = {
           keyword: null,
-          regexp: null,
+          expression: null,
           parameters: []
         };
 
@@ -126,7 +126,7 @@ module.exports = class extends Generator {
               const keyword = key === 'and' ? 'when' : key;
               options = Object.assign(options, {
                 keyword: keyword.charAt(0).toUpperCase() + keyword.slice(1, keyword.length),
-                regexp: stepData.regexp,
+                expression: stepData.expression,
                 parameters: stepData.parameters
               });
             }
@@ -134,9 +134,9 @@ module.exports = class extends Generator {
         });
 
         // To avoid repetitions, same steps should be reusable.
-        if (!parsedStepsDict[options.regexp]) {
+        if (!parsedStepsDict[options.expression]) {
           parsedSteps = parsedSteps.concat(options);
-          parsedStepsDict[options.regexp] = true;
+          parsedStepsDict[options.expression] = true;
         }
       });
 
@@ -144,20 +144,25 @@ module.exports = class extends Generator {
     }
   }
 
-  parseStepString(stepString) {
-    if (stepString) {
-      const paramRegexp = /"(.*?(\W*).*?)"/gm;
+  parseStepString(expression) {
+    if (expression) {
+      const paramRegexp = /(\W+?(\d+)\W+?|"(.*?(\W*).*?)")/gm;
+      const stringRegexp = /"(.*?(\W*).*?)"/gm;
+      const intParamRegexp = /(\W+?)(\d+)(\W+?)/gm;
       let stepData = {
         parameters: []
       };
 
-      if (paramRegexp.test(stepString)) {
-        const stepRegexp = stepString.replace(paramRegexp, '{string}');
+      if (paramRegexp.test(expression)) {
+        let expressionWithParams = expression.replace(stringRegexp, '{string}');
+        expressionWithParams = expressionWithParams.replace(intParamRegexp, function (match, p1, p2, p3) {
+          return [p1, '{int}', p3].join('');
+        });
         let i = 1;
         stepData = Object.assign(stepData, {
-          regexp: stepRegexp
+          expression: expressionWithParams
         });
-        while (i <= stepString.match(paramRegexp).length) {
+        while (i <= expression.match(paramRegexp).length) {
           stepData = Object.assign(stepData, {
             parameters: stepData.parameters.concat(`param${i}`)
           });
@@ -165,7 +170,7 @@ module.exports = class extends Generator {
         }
       } else {
         stepData = Object.assign(stepData, {
-          regexp: `${stepString}`
+          expression: `${expression}`
         });
       }
 

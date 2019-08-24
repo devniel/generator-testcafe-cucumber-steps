@@ -48,13 +48,19 @@ describe('Creates step file with paramaters', () => {
     ]);
   });
 
-  // It('creates step file equals to expected file', () => {
-  //   const withArgumentsSteps = fs.readFileSync(
-  //     path.resolve(__dirname, 'features/withArguments.steps.js'),
-  //     'utf-8'
-  //   );
-  //   assert.fileContent('withArguments.steps.js', withArgumentsSteps);
-  // });
+  it('creates step file equals to expected file', () => {
+    const withArgumentsSteps = fs.readFileSync(
+      path.resolve(__dirname, 'steps/generated/withArguments.steps.js'),
+      'utf-8'
+    );
+
+    const expectedwithArgumentsSteps = fs.readFileSync(
+      path.resolve(__dirname, 'steps/expected/withArguments.steps.js'),
+      'utf-8'
+    );
+
+    expect(expectedwithArgumentsSteps).toMatch(withArgumentsSteps);
+  });
 });
 
 describe('Create step file with repetitions', () => {
