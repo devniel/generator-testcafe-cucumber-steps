@@ -4,6 +4,7 @@ const yosay = require('yosay');
 const fs = require('fs');
 const gherkin = require('@devniel/gherkin');
 const directory = require('./gherkin-languages');
+const glob = require('glob');
 
 async function streamToArray(readableStream) {
   return new Promise(
@@ -28,19 +29,29 @@ module.exports = class extends Generator {
         name: 'featurePath',
         message: 'Specify the path to the target .feature file (test.feature || path/to/test):',
         default: null,
-        required: true
+        required: true,
+        store: true
       },
       {
         type: 'input',
         name: 'stepsPath',
-        message: 'Specify the path to the directory where the steps file will be created:',
-        default: '.'
+        message: 'Specify the path to the step_definitions directory:',
+        default: './features/step_definitions',
+        store: true
+      },
+      {
+        type: 'input',
+        name: 'stepFilename',
+        message: 'Specify the name of the file (without ".steps.js") where to save the steps:',
+        default: null,
+        store: true
       },
       {
         type: 'input',
         name: 'templatePath',
         message: 'Specify the path to the template that will be used to generate the files:',
-        default: null
+        default: null,
+        store: true
       }
     ];
 
@@ -51,29 +62,63 @@ module.exports = class extends Generator {
   }
 
   async writing() {
-    const {featurePath, stepsPath, templatePath} = this.props;
+    const {featurePath, stepsPath, stepFilename, templatePath} = this.props;
 
     if (!featurePath) {
       throw new Error('Features path must not be empty!');
     }
 
     const featureFilePath = /\.feature$/.test(featurePath) ? featurePath : `${featurePath}.feature`;
-
     const parsedFeature = await this.parseFeature(featureFilePath);
-    let featureName = featurePath.split('/');
-    featureName = featureName[featureName.length - 1];
-    featureName = /\.feature$/.test(featureName) ? featureName : `${featureName}.feature`;
-    featureName = featureName.slice(0, featureName.indexOf('.'));
+    const destinationPath = `${stepsPath}/${stepFilename}.steps.js`;
 
-    const destinationPath = `${stepsPath}/${featureName}.steps.js`;
-
-    this.fs.copyTpl(
-      templatePath || this.templatePath('bootstrap.ejs'),
-      this.destinationPath(destinationPath),
-      {
-        steps: parsedFeature
+    // Check other step definitions in the same folder.
+    glob(stepsPath + '/**/*.js', (err, files) => {
+      if (err) {
+        throw err;
       }
-    );
+
+      let expressions = {};
+
+      for (let file of files) {
+
+        if(this.destinationPath(destinationPath).includes(file)) continue;
+
+        const fileContent = fs.readFileSync(file, {encoding: 'utf-8'});
+        const regex = /(?:Given|Then|When)\((["']|\/\^)(?<expression>(?:(?=(\\?))\2.)*?)(\1|\$\/)/igm;
+        let m;
+
+        const expressions_file = {};
+        while ((m = regex.exec(fileContent)) !== null) {
+          // This is necessary to avoid infinite loops with zero-width matches
+          if (m.index === regex.lastIndex) {
+            regex.lastIndex++;
+          }
+          expressions[m.groups.expression] = true;
+          expressions_file[m.groups.expression] = true;
+        }
+
+      }
+
+      const expressionsToPersist = [];
+      parsedFeature.forEach(p => {
+        if (expressions[p.expression]) {
+          this.log(yosay(
+            `Expression "${p.expression}" is already implemented, ignoring it.`
+          ));
+        } else {
+          expressionsToPersist.push(p);
+        }
+      });
+
+      this.fs.copyTpl(
+        templatePath || this.templatePath('step_definition.ejs'),
+        this.destinationPath(destinationPath),
+        {
+          steps: expressionsToPersist
+        }
+      );
+    });
   }
 
   async parseFeature(featureFile) {
@@ -146,8 +191,8 @@ module.exports = class extends Generator {
 
   parseStepString(expression) {
     if (expression) {
-      const paramRegexp = /(\W+?(\d+)\W+?|"(.*?(\W*).*?)")/gm;
-      const stringRegexp = /"(.*?(\W*).*?)"/gm;
+      const paramRegexp = /(\W+?(\d+)\W+?|"(.*?(\W*).*?)"|(\W+?(\d+)\W+?|'(.*?(\W*).*?)'))/gm;
+      const stringRegexp = /("(.*?(\W*).*?)"|'(.*?(\W*).*?)')/gm;
       const intParamRegexp = /(\W+?)(\d+)(\W+?)/gm;
       let stepData = {
         parameters: []
